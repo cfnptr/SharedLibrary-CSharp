@@ -14,18 +14,24 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 
 namespace QuantumBranch.OpenSharedLibrary
 {
     /// <summary>
     /// Token container class
     /// </summary>
-    public class Token
+    public class Token : IComparable<Token>, IEquatable<Token>, IByteArray
     {
         /// <summary>
         /// Token value size in bytes
         /// </summary>
         public const int ByteSize = 16;
+
+        /// <summary>
+        /// Token value size in bytes
+        /// </summary>
+        public int ByteArraySize => ByteSize;
 
         /// <summary>
         /// Token GUIS value
@@ -42,11 +48,9 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Creates a new token container class instance
         /// </summary>
-        public Token(byte[] array, int index)
+        public Token(BinaryReader binaryReader)
         {
-            var bytes = new byte[ByteSize];
-            Buffer.BlockCopy(array, index, bytes, 0, ByteSize);
-            value = new Guid(bytes);
+            value = new Guid(binaryReader.ReadBytes(ByteSize));
         }
 
         /// <summary>
@@ -54,9 +58,7 @@ namespace QuantumBranch.OpenSharedLibrary
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-            return value == (Token)obj;
+            return value.Equals((Token)obj);
         }
         /// <summary>
         /// Returns username hash code 
@@ -74,21 +76,26 @@ namespace QuantumBranch.OpenSharedLibrary
         }
 
         /// <summary>
-        /// Converts token value to the byte array
+        /// Compares two tokens
         /// </summary>
-        public void ToBytes(byte[] array, int index)
+        public int CompareTo(Token other)
         {
-            var bytes = value.ToByteArray();
-            Buffer.BlockCopy(bytes, 0, array, index, ByteSize);
+            return value.CompareTo(other.value);
         }
+        /// <summary>
+        /// Returns true if tokens is equal
+        /// </summary>
+        public bool Equals(Token other)
+        {
+            return value.Equals(other.value);
+        }
+
         /// <summary>
         /// Converts token value to the byte array
         /// </summary>
-        public byte[] ToBytes()
+        public void ToBytes(BinaryWriter binaryWriter)
         {
-            var array = new byte[ByteSize];
-            ToBytes(array, 0);
-            return array;
+            binaryWriter.Write(value.ToByteArray());
         }
 
         public static bool operator ==(Token a, Token b) { return a.value == b.value; }

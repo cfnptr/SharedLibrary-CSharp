@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.IO;
+
 namespace QuantumBranch.OpenSharedLibrary
 {
     /// <summary>
@@ -21,17 +23,13 @@ namespace QuantumBranch.OpenSharedLibrary
     public interface IByteArray
     {
         /// <summary>
-        /// Class data size in bytes
+        /// Class data byte array size in bytes
         /// </summary>
-        int ByteSize { get; }
+        int ByteArraySize { get; }
 
         /// <summary>
         /// Converts class data to the byte array
         /// </summary>
-        void ToBytes(byte[] array, int index);
-        /// <summary>
-        /// Converts class data to the byte array
-        /// </summary>
-        byte[] ToBytes();
+        void ToBytes(BinaryWriter binaryWriter);
     }
 }

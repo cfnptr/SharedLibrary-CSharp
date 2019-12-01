@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Net.Mail;
 using System.Text;
 
@@ -22,7 +23,7 @@ namespace QuantumBranch.OpenSharedLibrary
     /// <summary>
     /// Email adderss container
     /// </summary>
-    public class EmailAddress : MailAddress
+    public class EmailAddress : MailAddress, IByteArray
     {
         /// <summary>
         /// Email address byte array size (1 size + 255 address)
@@ -38,14 +39,19 @@ namespace QuantumBranch.OpenSharedLibrary
         public const int MaxLength = 255;
 
         /// <summary>
+        /// Email address byte array size (1 size + 255 address)
+        /// </summary>
+        public int ByteArraySize => ByteSize;
+
+        /// <summary>
         /// Creates a new email address container class instance
         /// </summary>
         public EmailAddress(string address) : base(address)
         {
             if (address != Address)
-                throw new ArgumentException("Invalid email address", nameof(address));
+                throw new ArgumentException("Invalid email address");
             if (!IsValidLength(address.Length))
-                throw new ArgumentException("Invalid email address length", nameof(address));
+                throw new ArgumentException("Invalid email address length");
         }
         /// <summary>
         /// Creates a new email address container class instance
@@ -53,9 +59,9 @@ namespace QuantumBranch.OpenSharedLibrary
         public EmailAddress(string address, string displayName) : base(address, displayName)
         {
             if (address != Address)
-                throw new ArgumentException("Invalid email address", nameof(address));
+                throw new ArgumentException("Invalid email address");
             if (!IsValidLength(address.Length))
-                throw new ArgumentException("Invalid email address length", nameof(address));
+                throw new ArgumentException("Invalid email address length");
         }
         /// <summary>
         /// Creates a new email address container class instance
@@ -63,28 +69,19 @@ namespace QuantumBranch.OpenSharedLibrary
         public EmailAddress(string address, string displayName, Encoding displayNameEncoding) : base(address, displayName, displayNameEncoding)
         {
             if (address != Address)
-                throw new ArgumentException("Invalid email address", nameof(address));
+                throw new ArgumentException("Invalid email address");
             if (!IsValidLength(address.Length))
-                throw new ArgumentException("Invalid email address length", nameof(address));
+                throw new ArgumentException("Invalid email address length");
         }
 
         /// <summary>
         /// Converts email address value to the byte array
         /// </summary>
-        public void ToBytes(byte[] array, int index)
+        public void ToBytes(BinaryWriter binaryWriter)
         {
             var addressLength = Address.Length;
-            array[index] = (byte)addressLength;
-            Encoding.ASCII.GetBytes(Address, 0, Address.Length, array, index + 1);
-        }
-        /// <summary>
-        /// Converts email address value to the byte array
-        /// </summary>
-        public byte[] ToBytes()
-        {
-            var bytes = new byte[ByteSize];
-            ToBytes(bytes, 0);
-            return bytes;
+            binaryWriter.Write((byte)addressLength);
+            binaryWriter.Write(Encoding.ASCII.GetBytes(Address));
         }
 
         /// <summary>
@@ -98,10 +95,10 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Creates a new email address from the byte array
         /// </summary>
-        public static EmailAddress FromBytes(byte[] array, int index)
+        public static EmailAddress FromBytes(BinaryReader binaryReader)
         {
-            var length = array[index];
-            var address = Encoding.ASCII.GetString(array, index + 1, length);
+            var length = binaryReader.ReadByte();
+            var address = Encoding.ASCII.GetString(binaryReader.ReadBytes(length));
             return new EmailAddress(address);
         }
     }

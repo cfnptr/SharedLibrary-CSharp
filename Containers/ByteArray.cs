@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 
 namespace QuantumBranch.OpenSharedLibrary
 {
@@ -28,9 +29,9 @@ namespace QuantumBranch.OpenSharedLibrary
         private readonly byte[] value;
 
         /// <summary>
-        /// Class data size in bytes
+        /// Class data byte array size in bytes
         /// </summary>
-        public int ByteSize => value.Length;
+        public int ByteArraySize => value.Length;
 
         /// <summary>
         /// Byte array value
@@ -47,6 +48,13 @@ namespace QuantumBranch.OpenSharedLibrary
         public ByteArray(byte[] value)
         {
             this.value = value;
+        }
+        /// <summary>
+        /// Creates a new byte array container class instance
+        /// </summary>
+        public ByteArray(BinaryReader binaryReader, int count)
+        {
+            value = binaryReader.ReadBytes(count);
         }
 
         /// <summary>
@@ -74,9 +82,9 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Converts class data to the byte array
         /// </summary>
-        public void ToBytes(byte[] array, int index)
+        public void ToBytes(BinaryWriter binaryWriter)
         {
-            Buffer.BlockCopy(value, 0, array, index, value.Length);
+            binaryWriter.Write(value);
         }
         /// <summary>
         /// Converts class data to the byte array
@@ -89,16 +97,36 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Converts class data to the byte array
         /// </summary>
+        public static void ToBytes(IByteArray byteArray, Stream inputStream)
+        {
+            using (var binaryWriter = new BinaryWriter(inputStream))
+                byteArray.ToBytes(binaryWriter);
+        }
+        /// <summary>
+        /// Converts class data to the byte array
+        /// </summary>
         public static void ToBytes(IByteArray byteArray, byte[] array, int index)
         {
-            byteArray.ToBytes(array, index);
+            using (var memoryStream = new MemoryStream(array, index, byteArray.ByteArraySize))
+            {
+                using(var binaryWriter = new BinaryWriter(memoryStream))
+                    byteArray.ToBytes(binaryWriter);
+            }
         }
         /// <summary>
         /// Converts class data to the byte array
         /// </summary>
         public static byte[] ToBytes(IByteArray byteArray)
         {
-            return byteArray.ToBytes();
+            var array = new byte[byteArray.ByteArraySize];
+
+            using (var memoryStream = new MemoryStream(array))
+            {
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                    byteArray.ToBytes(binaryWriter);
+            }
+
+            return array;
         }
 
         /// <summary>

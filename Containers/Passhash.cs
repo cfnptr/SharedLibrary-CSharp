@@ -14,8 +14,8 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Numerics;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace QuantumBranch.OpenSharedLibrary
@@ -23,7 +23,7 @@ namespace QuantumBranch.OpenSharedLibrary
     /// <summary>
     /// Password hash container
     /// </summary>
-    public class Passhash
+    public class Passhash : IComparable<Passhash>, IEquatable<Passhash>, IByteArray
     {
         /// <summary>
         /// Passhash byte array size
@@ -33,6 +33,11 @@ namespace QuantumBranch.OpenSharedLibrary
         /// Minimum password length
         /// </summary>
         public const int MinPasswordLength = 6;
+
+        /// <summary>
+        /// Passhash byte array size
+        /// </summary>
+        public int ByteArraySize => ByteSize;
 
         /// <summary>
         /// Passhash big integer value
@@ -47,7 +52,7 @@ namespace QuantumBranch.OpenSharedLibrary
             var bytes = value.ToByteArray();
 
             if (!IsValidLength(bytes.Length))
-                throw new ArgumentException("Invalid passhash length", nameof(value));
+                throw new ArgumentException("Invalid passhash length");
 
             this.value = value;
         }
@@ -57,18 +62,16 @@ namespace QuantumBranch.OpenSharedLibrary
         public Passhash(byte[] value)
         {
             if (!IsValidLength(value.Length))
-                throw new ArgumentException("Invalid passhash length", nameof(value));
+                throw new ArgumentException("Invalid passhash length");
 
             this.value = new BigInteger(value);
         }
         /// <summary>
         /// Creates a new passhash container class instance
         /// </summary>
-        public Passhash(byte[] array, int index)
+        public Passhash(BinaryReader binaryReader)
         {
-            var bytes = new byte[ByteSize];
-            Buffer.BlockCopy(array, index, bytes, 0, ByteSize);
-            value = new BigInteger(bytes);
+            value = new BigInteger(binaryReader.ReadBytes(ByteSize));
         }
         /// <summary>
         /// Creates a new passhash container class instance
@@ -78,19 +81,17 @@ namespace QuantumBranch.OpenSharedLibrary
             var bytes = Convert.FromBase64String(base64);
 
             if (!IsValidLength(bytes.Length))
-                throw new ArgumentException("Invalid passhash length", nameof(base64));
+                throw new ArgumentException("Invalid passhash length");
             
             value = new BigInteger(bytes);
         }
 
         /// <summary>
-        /// Returns true if the passhash is equal to the object
+        /// Returns true if passhash is equal to the object
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-            return value == (BigInteger)obj;
+            return value.Equals((Passhash)obj);
         }
         /// <summary>
         /// Returns passhash hash code 
@@ -98,6 +99,21 @@ namespace QuantumBranch.OpenSharedLibrary
         public override int GetHashCode()
         {
             return value.GetHashCode();
+        }
+
+        /// <summary>
+        /// Compares two passhashes
+        /// </summary>
+        public int CompareTo(Passhash other)
+        {
+            return value.CompareTo(other.value);
+        }
+        /// <summary>
+        /// Returns true if passhashes is equal
+        /// </summary>
+        public bool Equals(Passhash other)
+        {
+            return value.Equals(other.value);
         }
 
         /// <summary>
@@ -112,17 +128,9 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Converts passhash value to the byte array
         /// </summary>
-        public void ToBytes(byte[] array, int index)
+        public void ToBytes(BinaryWriter binaryWriter)
         {
-            var bytes = value.ToByteArray();
-            Buffer.BlockCopy(bytes, 0, array, index, ByteSize);
-        }
-        /// <summary>
-        /// Converts passhash value to the byte array
-        /// </summary>
-        public byte[] ToBytes()
-        {
-            return value.ToByteArray();
+            binaryWriter.Write(value.ToByteArray());
         }
 
         /// <summary>
@@ -144,32 +152,25 @@ namespace QuantumBranch.OpenSharedLibrary
         /// <summary>
         /// Creaetes a new passhash from the password string value
         /// </summary>
-        public static Passhash PasswordToPasshash(string password, int iteration = ushort.MaxValue)
+        public static Passhash PasswordToPasshash(string password, int iterationCount = ushort.MaxValue)
         {
             if (!IsPasswordValidLength(password.Length))
-                throw new ArgumentException("Invalid password length", nameof(password));
+                throw new ArgumentException("Invalid password length");
 
-            var hash = Encoding.UTF8.GetBytes(password);
-
-            using(var encryptor = SHA512.Create())
-            {
-                for (int i = 0; i < iteration; i++)
-                    hash = encryptor.ComputeHash(hash);
-            }
-
+            var hash = Cryptographer.ToSHA512(password, Encoding.UTF8, iterationCount);
             return new Passhash(hash);
         }
 
-        public static bool operator ==(Passhash a, Passhash b) { return a.value == b.value; }
-        public static bool operator !=(Passhash a, Passhash b) { return a.value != b.value; }
-        public static bool operator ==(Passhash a, BigInteger b) { return a.value == b; }
-        public static bool operator !=(Passhash a, BigInteger b) { return a.value != b; }
-        public static bool operator ==(BigInteger a, Passhash b) { return a == b.value; }
-        public static bool operator !=(BigInteger a, Passhash b) { return a != b.value; }
+        public static bool operator ==(Passhash a, Passhash b) { return a.value.Equals(b); }
+        public static bool operator !=(Passhash a, Passhash b) { return !a.value.Equals(b); }
+        public static bool operator ==(Passhash a, BigInteger b) { return a.value.Equals(b); }
+        public static bool operator !=(Passhash a, BigInteger b) { return !a.value.Equals(b); }
+        public static bool operator ==(BigInteger a, Passhash b) { return a.Equals(b); }
+        public static bool operator !=(BigInteger a, Passhash b) { return !a.Equals(b); }
 
         public static implicit operator BigInteger(Passhash v) { return v.value; }
         public static implicit operator Passhash(BigInteger v) { return new Passhash(v); }
-        public static implicit operator byte[](Passhash v) { return v.ToBytes(); }
+        public static implicit operator byte[](Passhash v) { return v.value.ToByteArray(); }
         public static implicit operator Passhash(byte[] v) { return new Passhash(v); }
     }
 }

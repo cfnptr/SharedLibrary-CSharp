@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Text;
 
 namespace QuantumBranch.OpenSharedLibrary
@@ -21,8 +22,12 @@ namespace QuantumBranch.OpenSharedLibrary
     /// <summary>
     /// Alphanumeric lowercase username container (with "_")
     /// </summary>
-    public class Username
+    public class Username : IComparable, IComparable<Username>, IEquatable<Username>, IByteArray
     {
+        /// <summary>
+        /// Username value size in bytes
+        /// </summary>
+        public const int ByteSize = 16;
         /// <summary>
         /// Minimum username length
         /// </summary>
@@ -31,10 +36,11 @@ namespace QuantumBranch.OpenSharedLibrary
         /// Maximum username length
         /// </summary>
         public const int MaxLength = 16;
+
         /// <summary>
         /// Username value size in bytes
         /// </summary>
-        public const int ByteSize = 16;
+        public int ByteArraySize => ByteSize;
 
         /// <summary>
         /// Username string value
@@ -47,37 +53,35 @@ namespace QuantumBranch.OpenSharedLibrary
         public Username(string value)
         {
             if (!IsValidLength(value.Length))
-                throw new ArgumentException("Invalid username length", nameof(value));
+                throw new ArgumentException("Invalid username length");
             if (!IsValidLetters(value))
-                throw new ArgumentException("Invalid username letters", nameof(value));
+                throw new ArgumentException("Invalid username letters");
 
             this.value = value;
         }
         /// <summary>
         /// Creates a new username container class instance
         /// </summary>
-        public Username(byte[] array, int index)
+        public Username(BinaryReader binaryReader)
         {
-            var usernameLength = 0;
+            var username = Encoding.ASCII.GetString(binaryReader.ReadBytes(ByteSize));
 
-            for (int i = index, length = index + ByteSize; i < length; i++)
+            for (int i = 0; i < ByteSize; i++)
             {
-                if (array[i] == byte.MinValue)
+                if(username[i] == '\0')
                 {
-                    usernameLength = i - index;
-                    break;
-                }    
+                    if (!IsValidLength(i))
+                        throw new ArgumentException("Invalid username length");
+
+                    username = username.Substring(0, i);
+
+                    if (!IsValidLetters(username))
+                        throw new ArgumentException("Invalid username letters");
+
+                    value = username;
+                    return;
+                }
             }
-
-            if (!IsValidLength(usernameLength))
-                throw new ArgumentException("Invalid username length", nameof(array));
-
-            var username = Encoding.ASCII.GetString(array, index, usernameLength);
-
-            if (!IsValidLetters(username))
-                throw new ArgumentException("Invalid username letters", nameof(array));
-
-            value = username;
         }
 
         /// <summary>
@@ -85,9 +89,7 @@ namespace QuantumBranch.OpenSharedLibrary
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-            return value == (Username)obj;
+            return value.Equals((Username)obj);
         }
         /// <summary>
         /// Returns username hash code 
@@ -105,22 +107,37 @@ namespace QuantumBranch.OpenSharedLibrary
         }
 
         /// <summary>
-        /// Converts username value to the byte array
+        /// Compares two username to the object
         /// </summary>
-        public void ToBytes(byte[] array, int index)
+        public int CompareTo(object obj)
         {
-            var usernameLength = value.Length;
-            Encoding.ASCII.GetBytes(value, 0, usernameLength, array, index);
-            array[index + usernameLength] = byte.MinValue;
+            return value.CompareTo(obj);
         }
+        /// <summary>
+        /// Compares two usernames
+        /// </summary>
+        public int CompareTo(Username other)
+        {
+            return value.CompareTo(other.value);
+        }
+        /// <summary>
+        /// Returns true if two usernames is equal
+        /// </summary>
+        public bool Equals(Username other)
+        {
+            return value.Equals(other.value);
+        }
+
         /// <summary>
         /// Converts username value to the byte array
         /// </summary>
-        public byte[] ToBytes()
+        public void ToBytes(BinaryWriter binaryWriter)
         {
-            var array = new byte[ByteSize];
-            ToBytes(array, 0);
-            return array;
+            var array = Encoding.ASCII.GetBytes(value);
+            binaryWriter.Write(array);
+
+            if(array.Length < ByteSize)
+                binaryWriter.Write(new byte[ByteSize - array.Length]);
         }
 
         /// <summary>
