@@ -16,7 +16,7 @@
 using System.IO;
 using System.Numerics;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Vector classes extension container class

@@ -16,7 +16,7 @@
 using System;
 using System.IO;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Token container class

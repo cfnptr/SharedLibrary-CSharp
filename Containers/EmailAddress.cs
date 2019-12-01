@@ -18,7 +18,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Email adderss container

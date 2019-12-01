@@ -18,7 +18,7 @@ using System.IO;
 using System.Numerics;
 using System.Text;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Password hash container

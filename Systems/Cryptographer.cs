@@ -16,7 +16,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Cryptography usefull method container class

@@ -17,7 +17,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Alphanumeric lowercase username container (with "_")

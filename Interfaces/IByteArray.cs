@@ -15,7 +15,7 @@
 
 using System.IO;
 
-namespace QuantumBranch.OpenSharedLibrary
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Byte array interface
