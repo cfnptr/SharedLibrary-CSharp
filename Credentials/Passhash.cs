@@ -13,12 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using OpenSharedLibrary.Containers;
 using System;
 using System.IO;
 using System.Numerics;
 using System.Text;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
     /// Password hash container

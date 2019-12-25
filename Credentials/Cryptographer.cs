@@ -16,7 +16,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
     /// Cryptography usefull method container class

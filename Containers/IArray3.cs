@@ -16,7 +16,7 @@
 using System;
 using System.Numerics;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
     /// Three-dimensional array container interface

@@ -14,11 +14,12 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Logging
 {
     /// <summary>
     /// File logger class
@@ -26,7 +27,11 @@ namespace OpenSharedLibrary
     public class FileLogger : ILogger
     {
         /// <summary>
-        /// Logger file stream instance
+        /// Stopwatch timer
+        /// </summary>
+        protected readonly Stopwatch timer;
+        /// <summary>
+        /// Logger file stream
         /// </summary>
         protected readonly FileStream stream;
 
@@ -38,8 +43,10 @@ namespace OpenSharedLibrary
         /// <summary>
         /// Creates a new file stream logger class instance
         /// </summary>
-        public FileLogger(LogType level, string logFolderPath)
+        public FileLogger(Stopwatch timer, LogType level, string logFolderPath)
         {
+            this.timer = timer ?? throw new ArgumentNullException();
+
             Level = level;
 
             if (!Directory.Exists(logFolderPath))
@@ -47,6 +54,8 @@ namespace OpenSharedLibrary
 
             var filePath = logFolderPath + DateTime.Now.ToString("yyyy-M-dd_HH-mm-ss");
             stream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
+
+            Info($"File logger started (dateTime: {DateTime.Now.ToLongTimeString()}, milliseconds: {timer.ElapsedMilliseconds})");
         }
 
         /// <summary>
@@ -57,23 +66,28 @@ namespace OpenSharedLibrary
         /// <summary>
         /// Logs a new message at fatal log level
         /// </summary>
-        public void Fatal(object message) { WriteToStream($"[{DateTime.Now.ToLongTimeString()}] [{Thread.CurrentThread.ManagedThreadId}] [Fatal]: {message}\n"); }
+        public void Fatal(object message)
+        {
+            var logMessage = $"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Fatal]: {message}\n";
+            WriteToStream(logMessage);
+            OnFatalLog(logMessage);
+        }
         /// <summary>
         /// Logs a new message at error log level
         /// </summary>
-        public void Error(object message) { WriteToStream($"[{DateTime.Now.ToLongTimeString()}] [{Thread.CurrentThread.ManagedThreadId}] [Error]: {message}\n"); }
+        public void Error(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Error]: {message}\n"); }
         /// <summary>
         /// Logs a new message at info log level
         /// </summary>
-        public void Info(object message) { WriteToStream($"[{DateTime.Now.ToLongTimeString()}] [{Thread.CurrentThread.ManagedThreadId}] [Info]: {message}\n"); }
+        public void Info(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Info]: {message}\n"); }
         /// <summary>
         /// Logs a new message at fatal log level
         /// </summary>
-        public void Debug(object message) { WriteToStream($"[{DateTime.Now.ToLongTimeString()}] [{Thread.CurrentThread.ManagedThreadId}] [Debug]: {message}\n"); }
+        public void Debug(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Debug]: {message}\n"); }
         /// <summary>
         /// Logs a new message at fatal log level
         /// </summary>
-        public void Trace(object message) { WriteToStream($"[{DateTime.Now.ToLongTimeString()}] [{Thread.CurrentThread.ManagedThreadId}] [Trace]: {message}\n"); }
+        public void Trace(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Trace]: {message}\n"); }
 
         /// <summary>
         /// Closes logger stream
@@ -97,5 +111,10 @@ namespace OpenSharedLibrary
                 stream.Flush();
             }
         }
+
+        /// <summary>
+        /// On fatal log message event
+        /// </summary>
+        protected virtual void OnFatalLog(string message) { }
     }
 }

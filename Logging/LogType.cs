@@ -13,23 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.IO;
-
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Logging
 {
     /// <summary>
-    /// Byte array interface
+    /// Logger log type enumerator
     /// </summary>
-    public interface IByteArray
+    public enum LogType : byte
     {
-        /// <summary>
-        /// Class data byte array size in bytes
-        /// </summary>
-        int ByteArraySize { get; }
-
-        /// <summary>
-        /// Converts class data to the byte array
-        /// </summary>
-        void ToBytes(BinaryWriter binaryWriter);
+        Off,
+        Fatal,
+        Error,
+        Info,
+        Debug,
+        Trace,
+        All
     }
 }

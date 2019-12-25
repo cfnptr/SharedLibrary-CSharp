@@ -13,11 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using OpenSharedLibrary.Containers;
 using System;
 using System.IO;
 using System.Text;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
     /// Alphanumeric lowercase username container (with "_")

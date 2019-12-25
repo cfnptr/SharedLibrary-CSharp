@@ -15,7 +15,7 @@
 
 using System.IO;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
     /// Byte array container class

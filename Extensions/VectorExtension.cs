@@ -16,7 +16,7 @@
 using System.IO;
 using System.Numerics;
 
-namespace OpenSharedLibrary
+namespace OpenSharedLibrary.Extensions
 {
     /// <summary>
     /// Vector classes extension container class
