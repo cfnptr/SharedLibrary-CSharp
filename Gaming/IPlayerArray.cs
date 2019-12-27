@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Credentials;
+using System.Net;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Player array interface (thread-safe)
     /// </summary>
-    public enum LogType : byte
+    public interface IPlayerArray : IConcurentCollection<Username, IPlayer>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Returns player from the array (null if not exist)
+        /// </summary>
+        IPlayer Get(IPEndPoint remoteEndPoint);
     }
 }

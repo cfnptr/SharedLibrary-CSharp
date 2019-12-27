@@ -19,7 +19,7 @@ using System.Numerics;
 namespace OpenSharedLibrary.Extensions
 {
     /// <summary>
-    /// Vector classes extension container class
+    /// Vector extension container class
     /// </summary>
     public static class VectorExtension
     {

@@ -13,51 +13,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Credentials;
+using System;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger class interface
+    /// Room interface
     /// </summary>
-    public interface ILogger
+    public interface IRoom : IComparable, IComparable<IRoom>, IEquatable<IRoom>
     {
         /// <summary>
-        /// Logger logging level
+        /// Room information
         /// </summary>
-        LogType Level { get; set; }
+        RoomInfo Info { get; }
 
         /// <summary>
-        /// Returns true if logger should log this level
+        /// Current room player count
         /// </summary>
-        bool Log(LogType level);
+        int PlayerCount { get; }
+        /// <summary>
+        /// Maximum room player count
+        /// </summary>
+        int MaxPlayerCount { get; }
 
         /// <summary>
-        /// Logs a new message at fatal log level
+        /// Player database
         /// </summary>
-        void Fatal(object message);
+        IPlayerDatabase PlayerDatabase { get; }
         /// <summary>
-        /// Logs a new message at error log level
+        /// Player array
         /// </summary>
-        void Error(object message);
-        /// <summary>
-        /// Logs a new message at warning log level
-        /// </summary>
-        void Warning(object message);
-        /// <summary>
-        /// Logs a new message at info log level
-        /// </summary>
-        void Info(object message);
-        /// <summary>
-        /// Logs a new message at fatal log level
-        /// </summary>
-        void Debug(object message);
-        /// <summary>
-        /// Logs a new message at fatal log level
-        /// </summary>
-        void Trace(object message);
+        IPlayerArray Players { get; }
 
         /// <summary>
-        /// Closes logger stream
+        /// Sets a new maximum room player count
         /// </summary>
-        void Close();
+        void SetMaxPlayerCount(int count);
+
+        /// <summary>
+        /// Returns true if player has joined the room
+        /// </summary>
+        bool JoinPlayer(IAccount account, out RoomInfo roomInfo, out Token connectToken);
+        /// <summary>
+        /// Returns true if player has disconnected from the room
+        /// </summary>
+        bool DisconnectPlayer(Username player, int reason);
+
+        /// <summary>
+        /// Closes room
+        /// </summary>
+        void CloseRoom();
     }
 }

@@ -13,20 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Database abstract base class
     /// </summary>
-    public enum LogType : byte
+    public abstract class Database<TKey, TValue> : IDatabase<TKey, TValue>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Returns true if the database contains item
+        /// </summary>
+        public abstract bool Contains(TKey key);
+        /// <summary>
+        /// Returns item readed from the database (if not readed null)
+        /// </summary>
+        public abstract TValue Read(TKey key);
+        /// <summary>
+        /// Writes item to the database (Returns result)
+        /// </summary>
+        public abstract bool Write(TKey key, TValue value);
     }
 }

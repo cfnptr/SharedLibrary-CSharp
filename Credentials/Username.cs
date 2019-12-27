@@ -69,7 +69,7 @@ namespace OpenSharedLibrary.Credentials
 
             for (int i = 0; i < ByteSize; i++)
             {
-                if(username[i] == '\0')
+                if (username[i] == '\0')
                 {
                     if (!IsValidLength(i))
                         throw new ArgumentException("Invalid username length");
@@ -82,7 +82,7 @@ namespace OpenSharedLibrary.Credentials
                     value = username;
                     return;
                 }
-            }
+            };
         }
 
         /// <summary>
@@ -90,7 +90,10 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            return value.Equals((Username)obj);
+            if (obj is Username username)
+                return value.Equals(username.value);
+            else
+                return false;
         }
         /// <summary>
         /// Returns username hash code 
@@ -108,7 +111,7 @@ namespace OpenSharedLibrary.Credentials
         }
 
         /// <summary>
-        /// Compares two username to the object
+        /// Compares username to the object
         /// </summary>
         public int CompareTo(object obj)
         {

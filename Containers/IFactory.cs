@@ -13,20 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Value factory interface
     /// </summary>
-    public enum LogType : byte
+    public interface IFactory<TValue>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Creates a new value instance
+        /// </summary>
+        TValue Create();
     }
 }

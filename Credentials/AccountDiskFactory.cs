@@ -13,20 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using System.IO;
+
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Account disk value factory class
     /// </summary>
-    public enum LogType : byte
+    public class AccountDiskFactory : AccountFactory, IAccountDiskFactory
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Item data byte array size
+        /// </summary>
+        public int ByteArraySize => Account.ByteSize;
+
+        /// <summary>
+        /// Creates a new account instance
+        /// </summary>
+        public IAccount Create(BinaryReader binaryReader)
+        {
+            return new Account(binaryReader);
+        }
     }
 }

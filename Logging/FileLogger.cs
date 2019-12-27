@@ -55,7 +55,8 @@ namespace OpenSharedLibrary.Logging
             var filePath = logFolderPath + DateTime.Now.ToString("yyyy-M-dd_HH-mm-ss");
             stream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
 
-            Info($"File logger started (dateTime: {DateTime.Now.ToLongTimeString()}, milliseconds: {timer.ElapsedMilliseconds})");
+            if (!Stopwatch.IsHighResolution)
+                Warning("Stopwatch timer used without a high resolution system performance counter");
         }
 
         /// <summary>
@@ -76,6 +77,10 @@ namespace OpenSharedLibrary.Logging
         /// Logs a new message at error log level
         /// </summary>
         public void Error(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Error]: {message}\n"); }
+        /// <summary>
+        /// Logs a new message at warning log level
+        /// </summary>
+        public void Warning(object message) { WriteToStream($"[{timer.ElapsedMilliseconds}] [{Thread.CurrentThread.ManagedThreadId}] [Warning]: {message}\n"); }
         /// <summary>
         /// Logs a new message at info log level
         /// </summary>

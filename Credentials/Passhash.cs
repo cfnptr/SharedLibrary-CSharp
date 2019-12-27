@@ -24,7 +24,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Password hash container
     /// </summary>
-    public class Passhash : IComparable<Passhash>, IEquatable<Passhash>, IByteArray
+    public class Passhash : IComparable, IComparable<Passhash>, IEquatable<Passhash>, IByteArray
     {
         /// <summary>
         /// Passhash byte array size
@@ -43,7 +43,7 @@ namespace OpenSharedLibrary.Credentials
         /// <summary>
         /// Passhash big integer value
         /// </summary>
-        protected BigInteger value;
+        protected readonly BigInteger value;
 
         /// <summary>
         /// Creates a new passhash container class instance
@@ -72,7 +72,8 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public Passhash(BinaryReader binaryReader)
         {
-            value = new BigInteger(binaryReader.ReadBytes(ByteSize));
+            var bytes = binaryReader.ReadBytes(ByteSize);
+            value = new BigInteger(bytes);
         }
         /// <summary>
         /// Creates a new passhash container class instance
@@ -92,7 +93,10 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            return value.Equals((Passhash)obj);
+            if (obj is Passhash passhash)
+                return value.Equals(passhash.value);
+            else
+                return false;
         }
         /// <summary>
         /// Returns passhash hash code 
@@ -102,6 +106,13 @@ namespace OpenSharedLibrary.Credentials
             return value.GetHashCode();
         }
 
+        /// <summary>
+        /// Compares passhash to the object
+        /// </summary>
+        public int CompareTo(object obj)
+        {
+            return value.CompareTo(obj);
+        }
         /// <summary>
         /// Compares two passhashes
         /// </summary>
@@ -131,7 +142,8 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public void ToBytes(BinaryWriter binaryWriter)
         {
-            binaryWriter.Write(value.ToByteArray());
+            var bytes = value.ToByteArray();
+            binaryWriter.Write(bytes);
         }
 
         /// <summary>

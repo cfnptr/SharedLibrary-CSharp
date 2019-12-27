@@ -13,20 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using System.IO;
+
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Disk value factory interface
     /// </summary>
-    public enum LogType : byte
+    public interface IDiskFactory<TValue> : IFactory<TValue>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Item data byte array size
+        /// </summary>
+        int ByteArraySize { get; }
+
+        /// <summary>
+        /// Creates a new item instance
+        /// </summary>
+        TValue Create(BinaryReader binaryReader);
     }
 }

@@ -13,20 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Credentials;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Room array interface (thread-safe)
     /// </summary>
-    public enum LogType : byte
+    public interface IRoomArray : IConcurentCollection<int, IRoom>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Returns true if player has joined the room
+        /// </summary>
+        bool JoinPlayer(int roomId, IAccount account, out RoomInfo roomInfo, out Token connectToken);
+
+        /// <summary>
+        /// Returns room array informations
+        /// </summary>
+        RoomInfo[] GetInfos();
     }
 }

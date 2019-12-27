@@ -16,7 +16,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OpenSharedLibrary.Credentials
+namespace OpenSharedLibrary
 {
     /// <summary>
     /// Cryptography usefull method container class
@@ -33,8 +33,8 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public static byte[] ToSHA512(byte[] array)
         {
-            using (var encryptor = SHA512.Create())
-                return encryptor.ComputeHash(array);
+            using var encryptor = SHA512.Create();
+            return encryptor.ComputeHash(array);
         }
         /// <summary>
         /// Returns byte array SHA512 hash value
@@ -64,6 +64,25 @@ namespace OpenSharedLibrary.Credentials
         {
             var array = encoding.GetBytes(value);
             return ToSHA512(array, iterationCount);
+        }
+
+        /// <summary>
+        /// Fills an array of bytes with a cryptographically strong sequence of random values
+        /// </summary>
+        public static void FillWithSecureRandom(byte[] array)
+        {
+            using var rngCsp = new RNGCryptoServiceProvider();
+            rngCsp.GetBytes(array);
+        }
+        /// <summary>
+        /// Returns an array of bytes with a cryptographically strong sequence of random values
+        /// </summary>
+        public static byte[] GetSecureRandom(int size)
+        {
+            var array = new byte[size];
+            using var rngCsp = new RNGCryptoServiceProvider();
+            rngCsp.GetBytes(array);
+            return array;
         }
     }
 }

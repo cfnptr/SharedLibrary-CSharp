@@ -13,51 +13,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using System;
+
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
-    /// Logger class interface
+    /// Thread-safe collection interface
     /// </summary>
-    public interface ILogger
+    public interface IConcurentCollection<TKey, TValue>
     {
         /// <summary>
-        /// Logger logging level
+        /// Returns true if collection contains item
         /// </summary>
-        LogType Level { get; set; }
+        bool Contains(TKey key);
+        /// <summary>
+        /// Adds a new item to the collection
+        /// </summary>
+        bool Add(TKey key, TValue value);
+        /// <summary>
+        /// Returns item from the collection (null if not exist)
+        /// </summary>
+        TValue Get(TKey key);
 
         /// <summary>
-        /// Returns true if logger should log this level
+        /// Removes item from the collection
         /// </summary>
-        bool Log(LogType level);
+        bool Remove(TKey key);
+        /// <summary>
+        /// Removes item from the collection
+        /// </summary>
+        bool Remove(TKey key, out TValue value);
 
         /// <summary>
-        /// Logs a new message at fatal log level
+        /// Removes all collection items
         /// </summary>
-        void Fatal(object message);
-        /// <summary>
-        /// Logs a new message at error log level
-        /// </summary>
-        void Error(object message);
-        /// <summary>
-        /// Logs a new message at warning log level
-        /// </summary>
-        void Warning(object message);
-        /// <summary>
-        /// Logs a new message at info log level
-        /// </summary>
-        void Info(object message);
-        /// <summary>
-        /// Logs a new message at fatal log level
-        /// </summary>
-        void Debug(object message);
-        /// <summary>
-        /// Logs a new message at fatal log level
-        /// </summary>
-        void Trace(object message);
+        void Clear();
 
         /// <summary>
-        /// Closes logger stream
+        /// Returns true if action has performed
         /// </summary>
-        void Close();
+        bool Lock(TKey key, Action<TValue> onAction);
+        /// <summary>
+        /// Returns true if action has performed (for each item)
+        /// </summary>
+        bool Lock(Action<TValue> onAction);
     }
 }

@@ -13,51 +13,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+using System;
+using System.Net;
+
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
-    /// Logger class interface
+    /// Account container interface
     /// </summary>
-    public interface ILogger
+    public interface IAccount : IByteArray
     {
         /// <summary>
-        /// Logger logging level
+        /// Account username
         /// </summary>
-        LogType Level { get; set; }
-
+        Username Username { get; set; }
         /// <summary>
-        /// Returns true if logger should log this level
+        /// Account passhash
         /// </summary>
-        bool Log(LogType level);
-
+        Passhash Passhash { get; set; }
         /// <summary>
-        /// Logs a new message at fatal log level
+        /// Account email address
         /// </summary>
-        void Fatal(object message);
+        EmailAddress EmailAddress { get; set; }
         /// <summary>
-        /// Logs a new message at error log level
+        /// Last account access token
         /// </summary>
-        void Error(object message);
+        Token AccessToken { get; set; }
         /// <summary>
-        /// Logs a new message at warning log level
+        /// Is account has blocked
         /// </summary>
-        void Warning(object message);
+        bool IsBlocked { get; set; }
         /// <summary>
-        /// Logs a new message at info log level
+        /// Account level (status)
         /// </summary>
-        void Info(object message);
+        byte Level { get; set; }
         /// <summary>
-        /// Logs a new message at fatal log level
+        /// Last account use date time
         /// </summary>
-        void Debug(object message);
+        DateTime DateTime { get; set; }
         /// <summary>
-        /// Logs a new message at fatal log level
+        /// Last account use ip address
         /// </summary>
-        void Trace(object message);
-
-        /// <summary>
-        /// Closes logger stream
-        /// </summary>
-        void Close();
+        IPAddress IpAddress { get; set; }
     }
 }

@@ -13,20 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Credentials;
+using System.Net;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Player value factory class
     /// </summary>
-    public enum LogType : byte
+    public class PlayerFactory : IPlayerFactory
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Creates a new player instance
+        /// </summary>
+        public IPlayer Create()
+        {
+            return new Player();
+        }
+        /// <summary>
+        /// Creates a new player instance
+        /// </summary>
+        public IPlayer Create(Username username, Token connecToken, IPEndPoint remoteEndPoint, long lastActionTime)
+        {
+            return new Player(username, connecToken, remoteEndPoint, lastActionTime);
+        }
     }
 }

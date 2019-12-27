@@ -37,24 +37,24 @@ namespace OpenSharedLibrary.Logging
         /// </summary>
         protected readonly string fromAddress;
         /// <summary>
-        /// Fatal error SMTP from password
-        /// </summary>
-        protected readonly string fromPassword;
-        /// <summary>
         /// Fatal error SMTP to address
         /// </summary>
         protected readonly string toAddress;
+        /// <summary>
+        /// Fatal error SMTP from password
+        /// </summary>
+        protected readonly ICredentialsByHost smtpCredentials;
 
         /// <summary>
         /// Creates a new smart file stream logger class instance
         /// </summary>
-        public SmartFileLogger(string smtpHost, int smtpPort, string fromAddress, string fromPassword, string toAddress, Stopwatch timer, LogType level, string logFolderPath) : base(timer, level, logFolderPath)
+        public SmartFileLogger(string smtpHost, int smtpPort, string fromAddress, string toAddress, ICredentialsByHost smtpCredentials, Stopwatch timer, LogType level, string logFolderPath) : base(timer, level, logFolderPath)
         {
             this.smtpHost = smtpHost;
             this.smtpPort = smtpPort;
             this.fromAddress = fromAddress;
-            this.fromPassword = fromPassword;
             this.toAddress = toAddress;
+            this.smtpCredentials = smtpCredentials;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace OpenSharedLibrary.Logging
             var smtpClient = new SmtpClient(smtpHost, smtpPort)
             {
                 EnableSsl = true,
-                Credentials = new NetworkCredential(fromAddress, fromPassword),
+                Credentials = smtpCredentials,
             };
 
             var subject = "Logged Fatal Exception";

@@ -24,7 +24,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Email adderss container
     /// </summary>
-    public class EmailAddress : MailAddress, IByteArray
+    public class EmailAddress : IComparable, IComparable<EmailAddress>, IEquatable<EmailAddress>, IByteArray
     {
         /// <summary>
         /// Email address byte array size (1 size + 255 address)
@@ -45,34 +45,85 @@ namespace OpenSharedLibrary.Credentials
         public int ByteArraySize => ByteSize;
 
         /// <summary>
+        /// Email address value
+        /// </summary>
+        protected readonly string value;
+
+        /// <summary>
         /// Creates a new email address container class instance
         /// </summary>
-        public EmailAddress(string address) : base(address)
+        public EmailAddress(string address)
         {
-            if (address != Address)
-                throw new ArgumentException("Invalid email address");
             if (!IsValidLength(address.Length))
                 throw new ArgumentException("Invalid email address length");
+
+            value = address;
+
+            var mailAddress = new MailAddress(address);
+            if (address != mailAddress.Address)
+                throw new ArgumentException("Invalid email address");
         }
         /// <summary>
         /// Creates a new email address container class instance
         /// </summary>
-        public EmailAddress(string address, string displayName) : base(address, displayName)
+        public EmailAddress(BinaryReader binaryReader)
         {
-            if (address != Address)
+            var addressLength = binaryReader.ReadByte();
+            var bytes = binaryReader.ReadBytes(addressLength);
+            binaryReader.BaseStream.Seek(ByteSize - addressLength, SeekOrigin.Current);
+
+            value = Encoding.ASCII.GetString(bytes);
+
+            var mailAddress = new MailAddress(value);
+            if (value != mailAddress.Address)
                 throw new ArgumentException("Invalid email address");
-            if (!IsValidLength(address.Length))
-                throw new ArgumentException("Invalid email address length");
+        }
+
+        /// <summary>
+        /// Returns true if the email address is equal to the object
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj is EmailAddress emailAddres)
+                return value.Equals(emailAddres.value);
+            else
+                return false;
         }
         /// <summary>
-        /// Creates a new email address container class instance
+        /// Returns email address hash code 
         /// </summary>
-        public EmailAddress(string address, string displayName, Encoding displayNameEncoding) : base(address, displayName, displayNameEncoding)
+        public override int GetHashCode()
         {
-            if (address != Address)
-                throw new ArgumentException("Invalid email address");
-            if (!IsValidLength(address.Length))
-                throw new ArgumentException("Invalid email address length");
+            return value.GetHashCode();
+        }
+        /// <summary>
+        /// Returns email address string value
+        /// </summary>
+        public override string ToString()
+        {
+            return value;
+        }
+
+        /// <summary>
+        /// Compares email address to the object
+        /// </summary>
+        public int CompareTo(object obj)
+        {
+            return value.CompareTo(obj);
+        }
+        /// <summary>
+        /// Compares two email addresses
+        /// </summary>
+        public int CompareTo(EmailAddress other)
+        {
+            return value.CompareTo(other.value);
+        }
+        /// <summary>
+        /// Returns true if two email addresses is equal
+        /// </summary>
+        public bool Equals(EmailAddress other)
+        {
+            return value.Equals(other.value);
         }
 
         /// <summary>
@@ -80,9 +131,12 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public void ToBytes(BinaryWriter binaryWriter)
         {
-            var addressLength = Address.Length;
-            binaryWriter.Write((byte)addressLength);
-            binaryWriter.Write(Encoding.ASCII.GetBytes(Address));
+            var length = (byte)value.Length;
+            binaryWriter.Write(length);
+
+            var bytes = Encoding.ASCII.GetBytes(value);
+            binaryWriter.Write(bytes);
+            binaryWriter.Seek(ByteSize - length, SeekOrigin.Current);
         }
 
         /// <summary>
@@ -93,14 +147,14 @@ namespace OpenSharedLibrary.Credentials
             return length >= MinLength && length <= MaxLength;
         }
 
-        /// <summary>
-        /// Creates a new email address from the byte array
-        /// </summary>
-        public static EmailAddress FromBytes(BinaryReader binaryReader)
-        {
-            var length = binaryReader.ReadByte();
-            var address = Encoding.ASCII.GetString(binaryReader.ReadBytes(length));
-            return new EmailAddress(address);
-        }
+        public static bool operator ==(EmailAddress a, EmailAddress b) { return a.value == b.value; }
+        public static bool operator !=(EmailAddress a, EmailAddress b) { return a.value != b.value; }
+        public static bool operator ==(EmailAddress a, string b) { return a.value == b; }
+        public static bool operator !=(EmailAddress a, string b) { return a.value != b; }
+        public static bool operator ==(string a, EmailAddress b) { return a == b.value; }
+        public static bool operator !=(string a, EmailAddress b) { return a != b.value; }
+
+        public static implicit operator string(EmailAddress v) { return v.value; }
+        public static implicit operator EmailAddress(string v) { return new EmailAddress(v); }
     }
 }

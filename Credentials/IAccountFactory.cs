@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+using System;
+using System.Net;
+
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Account value factory interface
     /// </summary>
-    public enum LogType : byte
+    public interface IAccountFactory : IFactory<IAccount>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Creates a new account instance
+        /// </summary>
+        IAccount Create(Username username, Passhash passhash, EmailAddress emailAddress, Token accessToken, bool isBlocked, byte level, DateTime dateTime, IPAddress ipAddress);
     }
 }

@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+namespace OpenSharedLibrary.Containers
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Disk database interface (thread-safe)
     /// </summary>
-    public enum LogType : byte
+    public interface IDiskDatabase<TKey, TValue> : IDatabase<TKey, TValue>
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Database directory path
+        /// </summary>
+        string Path { get; }
+        /// <summary>
+        /// Database value factory
+        /// </summary>
+        public IDiskFactory<TValue> Factory { get; }
     }
 }

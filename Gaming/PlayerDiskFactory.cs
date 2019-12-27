@@ -13,20 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using System.IO;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Player disk value factory class
     /// </summary>
-    public enum LogType : byte
+    public class PlayerDiskFactory : PlayerFactory, IPlayerDiskFactory
     {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
+        /// <summary>
+        /// Item data byte array size
+        /// </summary>
+        public int ByteArraySize => Player.ByteSize;
+
+        /// <summary>
+        /// Creates a new item instance
+        /// </summary>
+        public IPlayer Create(BinaryReader binaryReader)
+        {
+            return new Player(binaryReader);
+        }
     }
 }

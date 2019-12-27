@@ -13,20 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Credentials;
+
+namespace OpenSharedLibrary.Gaming
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Player disk database interface (thread-safe)
     /// </summary>
-    public enum LogType : byte
-    {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
-    }
+    public interface IPlayerDiskDatabase : IPlayerDatabase, IDiskDatabase<Username, IPlayer> { }
 }

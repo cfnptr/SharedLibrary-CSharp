@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.IO;
 
 namespace OpenSharedLibrary.Containers
@@ -98,19 +99,17 @@ namespace OpenSharedLibrary.Containers
         /// </summary>
         public static void ToBytes(IByteArray byteArray, Stream inputStream)
         {
-            using (var binaryWriter = new BinaryWriter(inputStream))
-                byteArray.ToBytes(binaryWriter);
+            using var binaryWriter = new BinaryWriter(inputStream);
+            byteArray.ToBytes(binaryWriter);
         }
         /// <summary>
         /// Converts class data to the byte array
         /// </summary>
         public static void ToBytes(IByteArray byteArray, byte[] array, int index)
         {
-            using (var memoryStream = new MemoryStream(array, index, byteArray.ByteArraySize))
-            {
-                using(var binaryWriter = new BinaryWriter(memoryStream))
-                    byteArray.ToBytes(binaryWriter);
-            }
+            using var memoryStream = new MemoryStream(array, index, byteArray.ByteArraySize);
+            using var binaryWriter = new BinaryWriter(memoryStream);
+            byteArray.ToBytes(binaryWriter);
         }
         /// <summary>
         /// Converts class data to the byte array
@@ -118,13 +117,9 @@ namespace OpenSharedLibrary.Containers
         public static byte[] ToBytes(IByteArray byteArray)
         {
             var array = new byte[byteArray.ByteArraySize];
-
-            using (var memoryStream = new MemoryStream(array))
-            {
-                using (var binaryWriter = new BinaryWriter(memoryStream))
-                    byteArray.ToBytes(binaryWriter);
-            }
-
+            using var memoryStream = new MemoryStream(array);
+            using var binaryWriter = new BinaryWriter(memoryStream);
+            byteArray.ToBytes(binaryWriter);
             return array;
         }
 

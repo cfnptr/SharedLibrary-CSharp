@@ -13,20 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace OpenSharedLibrary.Logging
+using OpenSharedLibrary.Containers;
+
+namespace OpenSharedLibrary.Credentials
 {
     /// <summary>
-    /// Logger log type enumerator
+    /// Account disk value factory interface
     /// </summary>
-    public enum LogType : byte
-    {
-        Off,
-        Fatal,
-        Error,
-        Warning,
-        Info,
-        Debug,
-        Trace,
-        All
-    }
+    public interface IAccountDiskFactory : IAccountFactory, IDiskFactory<IAccount> { }
 }
