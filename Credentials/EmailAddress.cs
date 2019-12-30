@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Collections.Bytes;
 using System;
 using System.IO;
 using System.Net.Mail;
@@ -24,7 +24,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Email adderss container
     /// </summary>
-    public class EmailAddress : IComparable, IComparable<EmailAddress>, IEquatable<EmailAddress>, IByteArray
+    public class EmailAddress : IByteArray, IComparable, IComparable<EmailAddress>, IEquatable<EmailAddress>
     {
         /// <summary>
         /// Email address byte array size (1 size + 255 address)
@@ -84,10 +84,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj is EmailAddress emailAddres)
-                return value.Equals(emailAddres.value);
-            else
-                return false;
+            return value.Equals(((EmailAddress)obj).value);
         }
         /// <summary>
         /// Returns email address hash code 
@@ -109,7 +106,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public int CompareTo(object obj)
         {
-            return value.CompareTo(obj);
+            return value.CompareTo(((EmailAddress)obj).value);
         }
         /// <summary>
         /// Compares two email addresses

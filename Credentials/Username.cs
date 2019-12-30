@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Collections.Bytes;
 using System;
 using System.IO;
 using System.Text;
@@ -23,7 +23,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Alphanumeric lowercase username container (with "_")
     /// </summary>
-    public class Username : IComparable, IComparable<Username>, IEquatable<Username>, IByteArray
+    public class Username : IByteArray, IComparable, IComparable<Username>, IEquatable<Username>
     {
         /// <summary>
         /// Username value size in bytes
@@ -90,10 +90,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj is Username username)
-                return value.Equals(username.value);
-            else
-                return false;
+            return value.Equals(((Username)obj).value);
         }
         /// <summary>
         /// Returns username hash code 
@@ -115,7 +112,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public int CompareTo(object obj)
         {
-            return value.CompareTo(obj);
+            return value.CompareTo(((Username)obj).value);
         }
         /// <summary>
         /// Compares two usernames

@@ -13,44 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using OpenSharedLibrary.Collections.Bytes;
+using OpenSharedLibrary.Credentials;
+using OpenSharedLibrary.Entities;
 using System;
+using System.Net;
 
-namespace OpenSharedLibrary.Gaming
+namespace OpenSharedLibrary.Gaming.Players
 {
     /// <summary>
-    /// Chance container structure (from 0.0f to 100.0f)
+    /// Player interface
     /// </summary>
-    public struct Chance
+    public interface IPlayer : IByteArray, IIdentifiable<long>, INameable<Username>, IComparable, IComparable<IPlayer>, IEquatable<IPlayer>
     {
         /// <summary>
-        /// Chance value
+        /// Last player action time in milliseconds
         /// </summary>
-        private readonly float value;
-
+        public long LastActionMS { get; set; }
         /// <summary>
-        /// Creates a new chance structure instance
+        /// Player connect token
         /// </summary>
-        public Chance(float value)
-        {
-            if (value < 0.0f || value > 100.0f)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            this.value = value;
-        }
-
+        public Token ConnecToken { get; set; }
         /// <summary>
-        /// Returns chance value
+        /// Player remote end point
         /// </summary>
-        public static implicit operator float(Chance chance)
-        {
-            return chance.value;
-        }
-        /// <summary>
-        /// Returns chance value
-        /// </summary>
-        public static implicit operator Chance(float value)
-        {
-            return new Chance(value);
-        }
+        public IPEndPoint RemoteEndPoint { get; set; }
     }
 }

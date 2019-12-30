@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Collections.Bytes;
 using System;
 using System.IO;
 using System.Numerics;
@@ -23,7 +23,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Secure token container class
     /// </summary>
-    public class Token : IComparable, IComparable<Token>, IEquatable<Token>, IByteArray
+    public class Token : IByteArray, IComparable, IComparable<Token>, IEquatable<Token>
     {
         /// <summary>
         /// Token value size in bytes
@@ -88,10 +88,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj is Token token)
-                return value.Equals(token.value);
-            else
-                return false;
+            return value.Equals(((Token)obj).value);
         }
         /// <summary>
         /// Returns username hash code 
@@ -113,7 +110,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public int CompareTo(object obj)
         {
-            return value.CompareTo(obj);
+            return value.CompareTo(((Token)obj).value);
         }
         /// <summary>
         /// Compares two tokens

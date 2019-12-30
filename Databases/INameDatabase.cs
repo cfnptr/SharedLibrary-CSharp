@@ -13,44 +13,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using OpenSharedLibrary.Collections.Bytes;
+using OpenSharedLibrary.Entities;
 
-namespace OpenSharedLibrary.Gaming
+namespace OpenSharedLibrary.Databases
 {
     /// <summary>
-    /// Chance container structure (from 0.0f to 100.0f)
+    /// Name database interface
     /// </summary>
-    public struct Chance
+    public interface INameDatabase<TName, TKey, TValue, TFactory> : IDatabase<TKey, TValue, TFactory> where TValue : INameable<TName>, IIdentifiable<TKey>
     {
         /// <summary>
-        /// Chance value
+        /// Returns true if the database contains key
         /// </summary>
-        private readonly float value;
-
+        bool ContainsKey(TName name);
         /// <summary>
-        /// Creates a new chance structure instance
+        /// Removes item from the database
         /// </summary>
-        public Chance(float value)
-        {
-            if (value < 0.0f || value > 100.0f)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            this.value = value;
-        }
-
+        bool TryRemove(TName name);
         /// <summary>
-        /// Returns chance value
+        /// Removes item from the database
         /// </summary>
-        public static implicit operator float(Chance chance)
-        {
-            return chance.value;
-        }
+        bool TryRemove(TName name, TFactory factory, out TValue value);
         /// <summary>
-        /// Returns chance value
+        /// Returns item from the database
         /// </summary>
-        public static implicit operator Chance(float value)
-        {
-            return new Chance(value);
-        }
+        bool TryGetValue(TName name, TFactory factory, out TValue value);
     }
 }

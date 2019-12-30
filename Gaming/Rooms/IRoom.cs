@@ -13,44 +13,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using OpenSharedLibrary.Credentials;
+using OpenSharedLibrary.Credentials.Accounts;
+using OpenSharedLibrary.Entities;
 using System;
 
-namespace OpenSharedLibrary.Gaming
+namespace OpenSharedLibrary.Gaming.Rooms
 {
     /// <summary>
-    /// Chance container structure (from 0.0f to 100.0f)
+    /// Room interface
     /// </summary>
-    public struct Chance
+    public interface IRoom : IIdentifiable<long>, IComparable, IComparable<IRoom>, IEquatable<IRoom>
     {
         /// <summary>
-        /// Chance value
+        /// Room name
         /// </summary>
-        private readonly float value;
+        string Name { get; set; }
+        /// <summary>
+        /// Maximum room player count
+        /// </summary>
+        int MaxPlayerCount { get; set; }
 
         /// <summary>
-        /// Creates a new chance structure instance
+        /// Current room player count
         /// </summary>
-        public Chance(float value)
-        {
-            if (value < 0.0f || value > 100.0f)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            this.value = value;
-        }
+        int PlayerCount { get; }
 
         /// <summary>
-        /// Returns chance value
+        /// Returns true if player has joined the room
         /// </summary>
-        public static implicit operator float(Chance chance)
-        {
-            return chance.value;
-        }
+        bool JoinPlayer(IAccount account, out RoomInfo roomInfo, out Token connectToken);
         /// <summary>
-        /// Returns chance value
+        /// Returns true if player has disconnected from the room
         /// </summary>
-        public static implicit operator Chance(float value)
-        {
-            return new Chance(value);
-        }
+        bool DisconnectPlayer(long id, int reason);
     }
 }

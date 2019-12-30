@@ -13,44 +13,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.IO;
+using System.Net;
 
-namespace OpenSharedLibrary.Gaming
+namespace OpenSharedLibrary.Credentials.Accounts
 {
     /// <summary>
-    /// Chance container structure (from 0.0f to 100.0f)
+    /// Account factory class
     /// </summary>
-    public struct Chance
+    public class AccountFactory : IAccountFactory<IAccount>
     {
         /// <summary>
-        /// Chance value
+        /// Account data byte array size
         /// </summary>
-        private readonly float value;
+        public int ByteArraySize => Account.ByteSize;
 
         /// <summary>
-        /// Creates a new chance structure instance
+        /// Creates a new account instance
         /// </summary>
-        public Chance(float value)
+        public IAccount Create()
         {
-            if (value < 0.0f || value > 100.0f)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            this.value = value;
-        }
-
-        /// <summary>
-        /// Returns chance value
-        /// </summary>
-        public static implicit operator float(Chance chance)
-        {
-            return chance.value;
+            return new Account();
         }
         /// <summary>
-        /// Returns chance value
+        /// Creates a new account instance
         /// </summary>
-        public static implicit operator Chance(float value)
+        public IAccount Create(BinaryReader binaryReader)
         {
-            return new Chance(value);
+            return new Account(binaryReader);
+        }
+        /// <summary>
+        /// Creates a new account instance
+        /// </summary>
+        public IAccount Create(long id, bool isBlocked, byte level, Username name, Passhash passhash, EmailAddress emailAddress, Token accessToken, IPAddress ipAddress)
+        {
+            return new Account(id, isBlocked, level, name, passhash, emailAddress, accessToken, ipAddress);
         }
     }
 }

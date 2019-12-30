@@ -13,44 +13,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using OpenSharedLibrary.Credentials;
+using System.IO;
+using System.Net;
 
-namespace OpenSharedLibrary.Gaming
+namespace OpenSharedLibrary.Gaming.Players
 {
     /// <summary>
-    /// Chance container structure (from 0.0f to 100.0f)
+    /// Player factory class
     /// </summary>
-    public struct Chance
+    public class PlayerFactory : IPlayerFactory<IPlayer>
     {
         /// <summary>
-        /// Chance value
+        /// Player data byte array size
         /// </summary>
-        private readonly float value;
+        public int ByteArraySize => Player.ByteSize;
 
         /// <summary>
-        /// Creates a new chance structure instance
+        /// Creates a new player instance
         /// </summary>
-        public Chance(float value)
+        public IPlayer Create()
         {
-            if (value < 0.0f || value > 100.0f)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            this.value = value;
-        }
-
-        /// <summary>
-        /// Returns chance value
-        /// </summary>
-        public static implicit operator float(Chance chance)
-        {
-            return chance.value;
+            return new Player();
         }
         /// <summary>
-        /// Returns chance value
+        /// Creates a new player instance
         /// </summary>
-        public static implicit operator Chance(float value)
+        public IPlayer Create(BinaryReader binaryReader)
         {
-            return new Chance(value);
+            return new Player(binaryReader);
+        }
+        /// <summary>
+        /// Creates a new player instance
+        /// </summary>
+        public IPlayer Create(long id, long lastActionTime, Username name, Token connecToken, IPEndPoint remoteEndPoint)
+        {
+            return new Player(id, lastActionTime, name, connecToken, remoteEndPoint);
         }
     }
 }

@@ -24,6 +24,10 @@ namespace OpenSharedLibrary.Logging
         /// Logger logging level
         /// </summary>
         LogType Level { get; set; }
+        /// <summary>
+        /// Write log messages to the console
+        /// </summary>
+        public bool WriteToConsole { get; set; }
 
         /// <summary>
         /// Returns true if logger should log this level

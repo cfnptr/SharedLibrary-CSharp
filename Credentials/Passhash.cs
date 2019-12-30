@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using OpenSharedLibrary.Containers;
+using OpenSharedLibrary.Collections.Bytes;
 using System;
 using System.IO;
 using System.Numerics;
@@ -24,7 +24,7 @@ namespace OpenSharedLibrary.Credentials
     /// <summary>
     /// Password hash container
     /// </summary>
-    public class Passhash : IComparable, IComparable<Passhash>, IEquatable<Passhash>, IByteArray
+    public class Passhash : IByteArray, IComparable, IComparable<Passhash>, IEquatable<Passhash>
     {
         /// <summary>
         /// Passhash byte array size
@@ -93,10 +93,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj is Passhash passhash)
-                return value.Equals(passhash.value);
-            else
-                return false;
+            return value.Equals(((Passhash)obj).value);
         }
         /// <summary>
         /// Returns passhash hash code 
@@ -111,7 +108,7 @@ namespace OpenSharedLibrary.Credentials
         /// </summary>
         public int CompareTo(object obj)
         {
-            return value.CompareTo(obj);
+            return value.CompareTo(((Passhash)obj).value);
         }
         /// <summary>
         /// Compares two passhashes
