@@ -1,24 +1,9 @@
-﻿
-// Copyright 2019 Nikita Fediuchin (QuantumBranch)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using OpenSharedLibrary.Collections.Bytes;
+﻿using InjectorGames.SharedLibrary.Collections.Bytes;
 using System;
 using System.IO;
 using System.Text;
 
-namespace OpenSharedLibrary.Credentials
+namespace InjectorGames.SharedLibrary.Credentials
 {
     /// <summary>
     /// Alphanumeric lowercase username container (with "_")
@@ -54,9 +39,9 @@ namespace OpenSharedLibrary.Credentials
         public Username(string value)
         {
             if (!IsValidLength(value.Length))
-                throw new ArgumentException("Invalid username length");
+                throw new ArgumentException("Incorrect username length");
             if (!IsValidLetters(value))
-                throw new ArgumentException("Invalid username letters");
+                throw new ArgumentException("Incorrect username letters");
 
             this.value = value;
         }
@@ -72,12 +57,12 @@ namespace OpenSharedLibrary.Credentials
                 if (username[i] == '\0')
                 {
                     if (!IsValidLength(i))
-                        throw new ArgumentException("Invalid username length");
+                        throw new ArgumentException("Incorrect username length");
 
                     username = username.Substring(0, i);
 
                     if (!IsValidLetters(username))
-                        throw new ArgumentException("Invalid username letters");
+                        throw new ArgumentException("Incorrect username letters");
 
                     value = username;
                     return;
@@ -137,7 +122,7 @@ namespace OpenSharedLibrary.Credentials
             var array = Encoding.ASCII.GetBytes(value);
             binaryWriter.Write(array);
 
-            if(array.Length < ByteSize)
+            if (array.Length < ByteSize)
                 binaryWriter.Write(new byte[ByteSize - array.Length]);
         }
 
