@@ -28,14 +28,15 @@ namespace InjectorGames.SharedLibrary.Credentials.Accounts
 
                 var array = File.ReadAllBytes($"{path}names");
                 var count = names.Count / (Username.ByteSize + sizeof(long));
-                using var memoryStream = new MemoryStream(array);
-                using var binaryReader = new BinaryReader(memoryStream);
 
-                for (int i = 0; i < count; i++)
+                using (var binaryReader = new BinaryReader(new MemoryStream(array)))
                 {
-                    var name = new Username(binaryReader);
-                    var id = binaryReader.ReadInt64();
-                    names.Add(name, id);
+                    for (int i = 0; i < count; i++)
+                    {
+                        var name = new Username(binaryReader);
+                        var id = binaryReader.ReadInt64();
+                        names.Add(name, id);
+                    }
                 }
             }
         }
@@ -47,19 +48,24 @@ namespace InjectorGames.SharedLibrary.Credentials.Accounts
             lock (locker)
             {
                 var array = new byte[names.Count * (Username.ByteSize + sizeof(long))];
-                using var memoryStream = new MemoryStream(array);
-                using var binaryWriter = new BinaryWriter(memoryStream);
 
-                foreach (var name in names)
+                using (var memoryStream = new MemoryStream(array))
                 {
-                    name.Key.ToBytes(binaryWriter);
-                    binaryWriter.Write(name.Value);
-                }
+                    using (var binaryWriter = new BinaryWriter(memoryStream))
+                    {
+                        foreach (var name in names)
+                        {
+                            name.Key.ToBytes(binaryWriter);
+                            binaryWriter.Write(name.Value);
+                        }
 
-                var fileStream = new FileStream($"{path}names", FileMode.Create, FileAccess.Write);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                memoryStream.CopyTo(fileStream);
-                fileStream.Close();
+                        using (var fileStream = new FileStream($"{path}names", FileMode.Create, FileAccess.Write))
+                        {
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            memoryStream.CopyTo(fileStream);
+                        }
+                    }
+                }
             }
         }
     }

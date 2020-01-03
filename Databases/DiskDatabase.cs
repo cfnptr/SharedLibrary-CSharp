@@ -252,7 +252,7 @@ namespace InjectorGames.SharedLibrary.Databases
         /// <summary>
         /// Writes item to the database stream
         /// </summary>
-        protected bool TryWriteStream(TValue value, FileMode fileMode, MemoryStream memoryStream)
+        protected bool TryWriteStream(TValue value, FileMode fileMode, Stream stream)
         {
             try
             {
@@ -261,11 +261,11 @@ namespace InjectorGames.SharedLibrary.Databases
                     if (useCompression)
                     {
                         using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
-                            memoryStream.CopyTo(gzipStream);
+                            stream.CopyTo(gzipStream);
                     }
                     else
                     {
-                        memoryStream.CopyTo(fileStream);
+                        stream.CopyTo(fileStream);
                     }
 
                     return true;
@@ -279,7 +279,7 @@ namespace InjectorGames.SharedLibrary.Databases
         /// <summary>
         /// Reads item from the database stream
         /// </summary>
-        protected bool TryReadStream(TKey key, MemoryStream memoryStream)
+        protected bool TryReadStream(TKey key, Stream stream)
         {
             try
             {
@@ -288,11 +288,11 @@ namespace InjectorGames.SharedLibrary.Databases
                     if (useCompression)
                     {
                         using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
-                            gzipStream.CopyTo(memoryStream);
+                            gzipStream.CopyTo(stream);
                     }
                     else
                     {
-                        fileStream.CopyTo(memoryStream);
+                        fileStream.CopyTo(stream);
                     }
 
                     return true;

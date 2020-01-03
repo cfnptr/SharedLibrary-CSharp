@@ -1,6 +1,5 @@
 ﻿using InjectorGames.SharedLibrary.Credentials;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace InjectorGames.SharedLibrary.Tests
@@ -57,11 +56,8 @@ namespace InjectorGames.SharedLibrary.Tests
             var username = new Username("test_username1");
             var bytes = new byte[Username.ByteSize];
 
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                using (var binaryWriter = new BinaryWriter(memoryStream))
-                    username.ToBytes(binaryWriter);
-            }
+            using (var binaryWriter = new BinaryWriter(new MemoryStream(bytes)))
+                username.ToBytes(binaryWriter);
 
             // ASCII Symbols: 116 == 't', 95 == '_', 0 == null
             Assert.AreEqual(116, bytes[0]);
@@ -75,11 +71,8 @@ namespace InjectorGames.SharedLibrary.Tests
             var username = new Username("test_username123");
             var bytes = new byte[Username.ByteSize];
 
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                using (var binaryWriter = new BinaryWriter(memoryStream))
-                    username.ToBytes(binaryWriter);
-            }
+            using (var binaryWriter = new BinaryWriter(new MemoryStream(bytes)))
+                username.ToBytes(binaryWriter);
 
             // ASCII Symbols: 116 == 't', 95 == '_'
             Assert.AreEqual(116, bytes[0]);

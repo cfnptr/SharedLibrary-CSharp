@@ -53,7 +53,7 @@ namespace InjectorGames.SharedLibrary.Credentials
             var length = 0;
             var username = Encoding.ASCII.GetString(binaryReader.ReadBytes(ByteSize));
 
-            while(length < ByteSize)
+            while (length < ByteSize)
             {
                 if (username[length] == '\0')
                     break;
@@ -64,7 +64,7 @@ namespace InjectorGames.SharedLibrary.Credentials
             if (!IsValidLength(length))
                 throw new ArgumentException("Incorrect username length");
 
-            if(length < ByteSize)
+            if (length < ByteSize)
                 username = username.Substring(0, length);
 
             if (!IsValidLetters(username))
