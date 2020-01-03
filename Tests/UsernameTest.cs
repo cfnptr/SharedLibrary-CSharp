@@ -8,37 +8,53 @@ namespace InjectorGames.SharedLibrary.Tests
     [TestClass]
     public class UsernameTest
     {
-        public const string value = "test_username0";
+        [TestMethod]
+        public void TestToString()
+        {
+            var value = "test_username123";
+            var username = new Username(value);
+            Assert.AreEqual(value, username.ToString());
+        }
 
         [TestMethod]
-        public void Test()
+        public void TestHashCode()
         {
+            var value = "test_username456";
             var username = new Username(value);
+            Assert.AreEqual(value.GetHashCode(), username.GetHashCode());
+        }
 
-            if (!(value == username) || value != username)
-                throw new Exception("Username is not equal to the value");
-
+        [TestMethod]
+        public void TestSpaceLetters()
+        {
             var isThrowed = false;
-            try { username = new Username("test username0"); }
+            try { _ = new Username("test username123"); }
             catch { isThrowed = true; }
-            if (!isThrowed)
-                throw new Exception("Available username value with spaces");
+            Assert.IsTrue(isThrowed);
+        }
 
-            isThrowed = false;
-            try { username = new Username("Test_username0"); }
+        [TestMethod]
+        public void TestBigLetters()
+        {
+            var isThrowed = false;
+            try { _ = new Username("test_Username123"); }
             catch { isThrowed = true; }
-            if (!isThrowed)
-                throw new Exception("Available username big letterts");
+            Assert.IsTrue(isThrowed);
+        }
 
-            isThrowed = false;
-            try { username = new Username("test.username0"); }
+        [TestMethod]
+        public void TestAlphanumericLetters()
+        {
+            var isThrowed = false;
+            try { _ = new Username("test.username123"); }
             catch { isThrowed = true; }
-            if (!isThrowed)
-                throw new Exception("Available username value with not alphanumeric values");
+            Assert.IsTrue(isThrowed);
+        }
 
-            if (username.ToString() != value)
-                throw new Exception("Wrong to string username method");
-
+        [TestMethod]
+        public void TestToBytes()
+        {
+            var username = new Username("test_username1");
             var bytes = new byte[Username.ByteSize];
 
             using (var memoryStream = new MemoryStream(bytes))
@@ -48,17 +64,72 @@ namespace InjectorGames.SharedLibrary.Tests
             }
 
             // ASCII Symbols: 116 == 't', 95 == '_', 0 == null
-            if (bytes[0] != 116 || bytes[4] != 95 || bytes[15] != 0)
-                throw new Exception("Wrong username byte array");
+            Assert.AreEqual(116, bytes[0]);
+            Assert.AreEqual(95, bytes[4]);
+            Assert.AreEqual(0, bytes[14]);
+        }
+
+        [TestMethod]
+        public void TestToBytesFull()
+        {
+            var username = new Username("test_username123");
+            var bytes = new byte[Username.ByteSize];
 
             using (var memoryStream = new MemoryStream(bytes))
             {
-                using (var binaryReader = new BinaryReader(memoryStream))
-                    username = new Username(binaryReader);
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                    username.ToBytes(binaryWriter);
             }
 
-            if (value != username)
-                throw new Exception("Wrong username byte array value");
+            // ASCII Symbols: 116 == 't', 95 == '_'
+            Assert.AreEqual(116, bytes[0]);
+            Assert.AreEqual(95, bytes[4]);
+        }
+
+        [TestMethod]
+        public void TestFromBytes()
+        {
+            var value = "test_username2";
+            var username = new Username(value);
+            var bytes = new byte[Username.ByteSize];
+
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                {
+                    username.ToBytes(binaryWriter);
+
+                    binaryWriter.Seek(0, SeekOrigin.Begin);
+
+                    using (var binaryReader = new BinaryReader(memoryStream))
+                        username = new Username(binaryReader);
+                }
+            }
+
+            Assert.AreEqual(value, username.ToString());
+        }
+
+        [TestMethod]
+        public void TestFromBytesFull()
+        {
+            var value = "test_username123";
+            var username = new Username(value);
+            var bytes = new byte[Username.ByteSize];
+
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                {
+                    username.ToBytes(binaryWriter);
+
+                    binaryWriter.Seek(0, SeekOrigin.Begin);
+
+                    using (var binaryReader = new BinaryReader(memoryStream))
+                        username = new Username(binaryReader);
+                }
+            }
+
+            Assert.AreEqual(value, username.ToString());
         }
     }
 }

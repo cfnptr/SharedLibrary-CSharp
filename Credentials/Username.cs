@@ -50,24 +50,28 @@ namespace InjectorGames.SharedLibrary.Credentials
         /// </summary>
         public Username(BinaryReader binaryReader)
         {
+            var length = 0;
             var username = Encoding.ASCII.GetString(binaryReader.ReadBytes(ByteSize));
 
-            for (int i = 0; i < ByteSize; i++)
+            while(length < ByteSize)
             {
-                if (username[i] == '\0')
-                {
-                    if (!IsValidLength(i))
-                        throw new ArgumentException("Incorrect username length");
+                if (username[length] == '\0')
+                    break;
 
-                    username = username.Substring(0, i);
+                length++;
+            }
 
-                    if (!IsValidLetters(username))
-                        throw new ArgumentException("Incorrect username letters");
+            if (!IsValidLength(length))
+                throw new ArgumentException("Incorrect username length");
 
-                    value = username;
-                    return;
-                }
-            };
+            if(length < ByteSize)
+                username = username.Substring(0, length);
+
+            if (!IsValidLetters(username))
+                throw new ArgumentException("Incorrect username letters");
+
+            value = username;
+            return;
         }
 
         /// <summary>

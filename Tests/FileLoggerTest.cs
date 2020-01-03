@@ -13,7 +13,7 @@ namespace InjectorGames.SharedLibrary.Tests
         public const string path = "unit-tests-logs/";
 
         [TestMethod]
-        public void Test()
+        public void TestLogging()
         {
             var clock = new Clock();
             clock.Start();
